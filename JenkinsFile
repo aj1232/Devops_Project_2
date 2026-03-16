@@ -1,0 +1,62 @@
+pipeline{
+    agent any
+    
+    environment{
+        DOCKER_IMAGE = "officialamit1232/capstone:latest"
+        GITHUB_URL = "https://github.com/aj1232/Devops_Project_2.git"
+    }
+    stages {
+        stage('Code Checkout'){
+            steps{
+                echo "taking code checkout from git hub ..."
+                git url: "${GITHUB_URL}", branch: 'master'
+            }
+        }
+        
+        stage('Build Docker Image'){
+            steps{
+                echo "Building docker image ..."
+                sh 'sudo docker build -t ${DOCKER_IMAGE} .'
+            }
+        }
+        
+        stage('Push Docker Image'){
+            steps{
+                echo "Pushing docker image to docker hub ..."
+                withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]){
+                    sh """
+                        sudo docker login -u username -p ${DOCKER_PASS}
+                        sudo docker push ${DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+        
+        stage('Deploy docker on workers') {
+            steps{
+                script {
+                    for(worker in WORKERS){
+                        echo "Pulling docker image and running container on ${worker} ..."
+                        node("${worker}"){
+                            sh 'sudo docker pull ${DOCKER_IMAGE}'
+                            sh 'sudo docker stop capstone-container'
+                            sh 'sudo docker rm capstone-container'
+                            sh 'sudo docker run -d --name capstone-container -p 80:80 ${DOCKER_IMAGE}'
+                            
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to kubernetes'){
+            steps{
+                echo "Deploying docker images on servers"
+                sh '''
+                kubectl apply -f deployment.yml
+                kubectl apply -f service.yml
+                '''
+            }
+        }
+    }
+}
