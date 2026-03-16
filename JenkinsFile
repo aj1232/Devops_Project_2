@@ -17,7 +17,7 @@ pipeline{
         stage('Build Docker Image'){
             steps{
                 echo "Building docker image ..."
-                sh 'sudo docker build -t ${DOCKER_IMAGE} .'
+                sh 'docker build -t ${DOCKER_IMAGE} .'
                 echo "Create docker image !!"
             }
         }
@@ -27,8 +27,8 @@ pipeline{
                 echo "Pushing docker image to docker hub ..."
                 withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]){
                     sh """
-                        sudo docker login -u username -p ${DOCKER_PASS}
-                        sudo docker push ${DOCKER_IMAGE}
+                        docker login -u username -p ${DOCKER_PASS}
+                        docker push ${DOCKER_IMAGE}
                     """
                 echo "Docker image uplaoded on docker hub !!"
                 }
