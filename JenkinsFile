@@ -35,7 +35,7 @@ pipeline{
             }
         }
         
-        stage('Deploy docker on workers') {
+        stage('Deploy image on workers') {
             steps{
                 script {
                     for(worker in WORKERS){
