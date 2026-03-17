@@ -4,15 +4,17 @@ pipeline{
     environment{
         DOCKER_IMAGE = "officialamit1232/capstone:latest"
         GITHUB_URL = "https://github.com/aj1232/Devops_Project_2.git"
+        DOCKERHUB_USERNAME = "officialamit1232"
+        DOCKERHUB_PASS = "Zxcvbnm@67663"
     }
     stages {
-        stage('Code Checkout'){
-            steps{
-                echo "Taking code checkout from git hub ..."
-                git url: "${GITHUB_URL}", branch: 'master'
-                echo "Code check out completed !!"
-            }
-        }
+        //stage('Code Checkout'){
+          //  steps{
+            //    echo "Taking code checkout from git hub ..."
+              //  git url: "${GITHUB_URL}", branch: 'master'
+               // echo "Code check out completed !!"
+            //}
+        //}
         
         stage('Build Docker Image'){
             steps{
@@ -27,7 +29,7 @@ pipeline{
                 echo "Pushing docker image to docker hub ..."
                 withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]){
                     sh """
-                        docker login -u username -p ${DOCKER_PASS}
+                        docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASS}
                         docker push ${DOCKER_IMAGE}
                     """
                 echo "Docker image uplaoded on docker hub !!"
