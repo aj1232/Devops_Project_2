@@ -8,14 +8,6 @@ pipeline{
         DOCKERHUB_PASS = "Zxcvbnm@67663"
     }
     stages {
-        //stage('Code Checkout'){
-          //  steps{
-            //    echo "Taking code checkout from git hub ..."
-              //  git url: "${GITHUB_URL}", branch: 'master'
-               // echo "Code check out completed !!"
-            //}
-        //}
-        
         stage('Build Docker Image'){
             steps{
                 echo "Building docker image ..."
@@ -33,30 +25,29 @@ pipeline{
             }
         }
         
-        stage('Deploy image on workers') {
+        stage('Deployment') {
+            agent{
+                label 'k8s_master'
+            }
             steps{
                 script {
-                    for(worker in WORKERS){
-                        echo "Pulling docker image and running container on ${worker} ..."
-                        node("${worker}"){
+                    def labels = ['k8s_worker1', 'k8s_worker2']
+                    for(label in labels){
+                        echo "Pulling docker image and running container on ${label} ..."
+                        node(label){
                             sh 'sudo docker pull ${DOCKER_IMAGE}'
                             sh 'sudo docker stop capstone-container'
                             sh 'sudo docker rm capstone-container'
                             sh 'sudo docker run -d --name capstone-container -p 80:80 ${DOCKER_IMAGE}'
                             
                         }
-                        echo "Added docker image on ${worker} !!"
+                        echo "Added docker image on ${label} !!"
                     }
+                    echo "Deploying docker images on servers"
+                    sh 'kubectl apply -f deployment.yml'
+                    sh 'kubectl apply -f service.yml'
+                    echo "Deployed docker images on servers !!"
                 }
-            }
-        }
-        
-        stage('Deploy to kubernetes'){
-            steps{
-                echo "Deploying docker images on servers"
-                sh 'kubectl apply -f deployment.yml'
-                sh 'kubectl apply -f service.yml'
-                echo "Deployed docker images on servers !!"
             }
         }
     }
