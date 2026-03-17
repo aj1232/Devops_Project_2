@@ -39,16 +39,16 @@ pipeline{
                         echo "Pulling docker image and running container on ${label} ..."
                         node(label){
                             sh 'sudo docker pull ${DOCKER_IMAGE}'
-                            sh 'sudo docker stop capstone-container'
-                            sh 'sudo docker rm capstone-container'
+                            //sh 'sudo docker stop capstone-container'
+                            //sh 'sudo docker rm capstone-container'
                             sh 'sudo docker run -d --name capstone-container -p 80:80 ${DOCKER_IMAGE}'
                             
                         }
                         echo "Added docker image on ${label} !!"
                     }
                     echo "Deploying docker images on servers"
-                    sh 'kubectl delete -f deployment.yml'
-                    sh 'kubectl delete -f service.yml'
+                    //sh 'kubectl delete -f deployment.yml'
+                    //sh 'kubectl delete -f service.yml'
                     sh 'sleep 20'
                     sh 'kubectl apply -f deployment.yml'
                     sh 'kubectl apply -f service.yml'
