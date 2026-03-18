@@ -49,7 +49,7 @@ pipeline{
                 }
             }
         }
-        Stage('Deployment') {
+        stage('Deployment') {
             agent{
                 label 'k8s_master'
             }
