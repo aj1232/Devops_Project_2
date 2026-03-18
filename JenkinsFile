@@ -38,7 +38,7 @@ pipeline{
                     for(label in labels){
                         echo "Pulling docker image and running container on ${label} ..."
                         node(label){
-                            sh 'sudo docker rmi ${DOCKER_IMAGE}'
+                           // sh 'sudo docker rmi ${DOCKER_IMAGE}'
                             sh 'sudo docker pull ${DOCKER_IMAGE}'
                         }
                         echo "Added docker image on ${label} !!"
