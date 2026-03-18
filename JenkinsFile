@@ -58,7 +58,7 @@ pipeline{
             }
             steps{
                 echo "Deploying docker images on servers"
-                sh 'scp *.yml ec2-user@3.111.47.123:/home/ec2-user/workspace/Capstone_2/'
+                sh 'scp *.yml ec2-user@65.0.131.148:/home/ec2-user/workspace/Capstone_2/'
                 //sh 'kubectl delete -f deployment.yml'
                 //sh 'kubectl delete -f service.yml'
                 sh 'sleep 20'
