@@ -38,7 +38,7 @@ pipeline{
                     for(label in labels){
                         echo "Pulling docker image and running container on ${label} ..."
                         node(label){
-                           // sh 'sudo docker rmi ${DOCKER_IMAGE}'
+                            sh 'sudo docker rmi ${DOCKER_IMAGE}'
                             sh 'sudo docker pull ${DOCKER_IMAGE}'
                         }
                         echo "Added docker image on ${label} !!"
@@ -57,8 +57,8 @@ pipeline{
                 echo "Deploying docker images on servers"
                 sh ''
                 sh 'scp jenkins@100.48.63.125:/var/lib/jenkins/workspace/Capstone_2/*.yml /home/ec2-user/workspace/Capstone_2/'
-                //sh 'kubectl delete -f deployment.yml'
-                //sh 'kubectl delete -f service.yml'
+                sh 'kubectl delete -f deployment.yml'
+                sh 'kubectl delete -f service.yml'
                 sh 'sleep 20'
                 sh 'kubectl apply -f deployment.yml'
                 sh 'kubectl apply -f service.yml'
